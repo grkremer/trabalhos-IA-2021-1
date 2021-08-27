@@ -1,7 +1,4 @@
 class Nodo:
-    """
-    Implemente a classe Nodo com os atributos descritos na funcao init
-    """
     def __init__(self, estado, pai, acao, custo):
         """
         Inicializa o nodo com os atributos recebidos
@@ -10,14 +7,23 @@ class Nodo:
         :param acao:str, acao a partir do pai que leva a este nodo (None no caso do nó raiz)
         :param custo:int, custo do caminho da raiz até este nó
         """
-        # substitua a linha abaixo pelo seu codigo
-        raise NotImplementedError
+        self.estado = estado
+        self.pai = pai
+        self.acao = acao
+        self.custo = custo
 
 def troca(palavra, a, b):
     palavra = list(palavra)
     palavra[a], palavra[b] = palavra[b], palavra[a]
     return ''.join(palavra)
 def sucessor(estado):
+    """
+    Recebe um estado (string) e retorna uma lista de tuplas (ação,estado atingido)
+    para cada ação possível no estado recebido.
+    Tanto a ação quanto o estado atingido são strings também.
+    :param estado:
+    :return:
+    """
     posicao = acha_underline(estado)
     solucoes = []
     if(pode_mover_baixo(estado, posicao)):
@@ -39,22 +45,22 @@ def pode_mover_esquerda(estado, posicao):
     return posicao != 0 and posicao != 3 and posicao != 6
 def pode_mover_direita(estado, posicao):
     return posicao != 2 and posicao != 5 and posicao != 8
-def move_cima(estado,posicao):
+def move_cima(estado, posicao):
     if pode_mover_cima(estado, posicao):
         return troca(estado, posicao, posicao-3)
     else:
         return estado
-def move_baixo(estado,posicao):
+def move_baixo(estado, posicao):
     if pode_mover_baixo(estado, posicao):
         return troca(estado, posicao, posicao+3)
     else:
         return estado
-def move_direita(estado,posicao):
+def move_direita(estado, posicao):
     if pode_mover_direita(estado, posicao):
         return troca(estado, posicao, posicao+1)
     else:
         return estado
-def move_esquerda(estado,posicao):
+def move_esquerda(estado, posicao):
     if pode_mover_esquerda(estado, posicao):
         return troca(estado, posicao, posicao-1)
     else:
@@ -71,8 +77,12 @@ def expande(nodo):
     :param nodo: objeto da classe Nodo
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    nodos_filhos = []
+    pai = nodo
+    jogadas = sucessor(nodo.estado)
+    for jogada in jogadas:
+        nodos_filhos.append(Nodo(jogada[1], pai, jogada[0], pai.custo+1))
+    return nodos_filhos
 
 
 def bfs(estado):
