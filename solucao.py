@@ -1,3 +1,6 @@
+from queue import Queue, LifoQueue
+
+
 class Nodo:
     def __init__(self, estado, pai, acao, custo):
         """
@@ -12,10 +15,13 @@ class Nodo:
         self.acao = acao
         self.custo = custo
 
+
 def troca(palavra, a, b):
     palavra = list(palavra)
     palavra[a], palavra[b] = palavra[b], palavra[a]
     return ''.join(palavra)
+
+
 def sucessor(estado):
     """
     Recebe um estado (string) e retorna uma lista de tuplas (ação,estado atingido)
@@ -35,40 +41,55 @@ def sucessor(estado):
     if(pode_mover_direita(estado, posicao)):
         solucoes.append(("direita", move_direita(estado, posicao)))
     return solucoes
+
+
 def acha_underline(estado):
     return estado.index('_')
+
+
 def pode_mover_cima(estado, posicao):
     return posicao-3 >= 0
+
+
 def pode_mover_baixo(estado, posicao):
     return posicao+3 < 9
+
+
 def pode_mover_esquerda(estado, posicao):
     return posicao != 0 and posicao != 3 and posicao != 6
+
+
 def pode_mover_direita(estado, posicao):
     return posicao != 2 and posicao != 5 and posicao != 8
+
+
 def move_cima(estado, posicao):
     if pode_mover_cima(estado, posicao):
         return troca(estado, posicao, posicao-3)
     else:
         return estado
+
+
 def move_baixo(estado, posicao):
     if pode_mover_baixo(estado, posicao):
         return troca(estado, posicao, posicao+3)
     else:
         return estado
+
+
 def move_direita(estado, posicao):
     if pode_mover_direita(estado, posicao):
         return troca(estado, posicao, posicao+1)
     else:
         return estado
+
+
 def move_esquerda(estado, posicao):
     if pode_mover_esquerda(estado, posicao):
         return troca(estado, posicao, posicao-1)
     else:
         return estado
-def print_estado(estado):
-    print(estado[0:3])
-    print(estado[3:6])
-    print(estado[6:9])
+
 
 def expande(nodo):
     """
@@ -94,8 +115,23 @@ def bfs(estado):
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    objetivo = "12345678_"
+    caminho = []
+    x = set()
+    f: Queue = Queue()
+    f.put(Nodo(estado, None, None, 0))
+    while (not f.empty()):
+        v = f.get()
+        if v.estado == objetivo:
+            while v.pai is not None:
+                caminho.insert(0, v)
+                v = v.pai
+            return caminho
+        if v.estado not in x:
+            x.add(v.estado)
+            for z in expande(v):
+                f.put(z)
+    return None
 
 
 def dfs(estado):
@@ -107,8 +143,23 @@ def dfs(estado):
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    objetivo = "12345678_"
+    caminho = []
+    x = set()
+    f: LifoQueue = LifoQueue()
+    f.put(Nodo(estado, None, None, 0))
+    while (not f.empty()):
+        v = f.get()
+        if v.estado == objetivo:
+            while v.pai is not None:
+                caminho.insert(0, v)
+                v = v.pai
+            return caminho
+        if v.estado not in x:
+            x.add(v.estado)
+            for z in expande(v):
+                f.put(z)
+    return None
 
 
 def astar_hamming(estado):
