@@ -90,6 +90,42 @@ def move_esquerda(estado, posicao):
     else:
         return estado
 
+def custo_hamming(estado):
+    valor = 0
+    objetivo = "12345678_"
+    for index, x in enumerate(estado):
+        if objetivo[index] != x:
+            valor = valor+1
+
+    return valor
+
+def encontra_pos_y(y):
+    if y in "123":
+        return 0
+    elif y in "456":
+        return 1
+    else:
+        return 2
+
+def encontra_pos_x(x):
+    if x in "147":
+        return 0
+    elif x in "258":
+        return 1
+    else:
+        return 2
+
+
+
+def custo_manhattan(estado):
+    valor = 0
+    objetivo = "12345678_"
+    for index, x in enumerate(estado):
+        valor = abs(encontra_pos_x(objetivo[index]) - encontra_pos_x(x)) + abs(encontra_pos_y(objetivo[index]) - encontra_pos_y(x)) + valor
+    return valor
+
+
+
 
 def expande(nodo):
     """
@@ -175,6 +211,8 @@ def astar_hamming(estado):
     raise NotImplementedError
 
 
+
+
 def astar_manhattan(estado):
     """
     Recebe um estado (string), executa a busca A* com h(n) = soma das distâncias de Manhattan e
@@ -186,3 +224,5 @@ def astar_manhattan(estado):
     """
     # substituir a linha abaixo pelo seu codigo
     raise NotImplementedError
+
+print(custo_manhattan("12345678_"))
