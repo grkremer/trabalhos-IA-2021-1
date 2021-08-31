@@ -1,4 +1,5 @@
 from queue import Queue, LifoQueue
+import time
 
 
 class Nodo:
@@ -90,41 +91,43 @@ def move_esquerda(estado, posicao):
     else:
         return estado
 
+
 def custo_hamming(estado):
     valor = 0
     objetivo = "12345678_"
     for index, x in enumerate(estado):
         if objetivo[index] != x:
-            valor = valor+1
+            valor += 1
 
     return valor
 
-def encontra_pos_y(y):
-    if y in "123":
+
+def encontra_pos_y(y, e):
+    if y in e[0:3]:
         return 0
-    elif y in "456":
+    elif y in e[3:6]:
         return 1
     else:
         return 2
 
-def encontra_pos_x(x):
-    if x in "147":
+
+def encontra_pos_x(x, e):
+    if x in [e[0], e[3], e[6]]:
         return 0
-    elif x in "258":
+    elif x in [e[1], e[4], e[7]]:
         return 1
     else:
         return 2
-
 
 
 def custo_manhattan(estado):
     valor = 0
     objetivo = "12345678_"
     for index, x in enumerate(estado):
-        valor = abs(encontra_pos_x(objetivo[index]) - encontra_pos_x(x)) + abs(encontra_pos_y(objetivo[index]) - encontra_pos_y(x)) + valor
+        x_dist = abs(encontra_pos_x(x, objetivo) - encontra_pos_x(x, estado))
+        y_dist = abs(encontra_pos_y(x, objetivo) - encontra_pos_y(x, estado))
+        valor += x_dist+y_dist
     return valor
-
-
 
 
 def expande(nodo):
@@ -198,7 +201,7 @@ def dfs(estado):
     return None
 
 
-def menorCusto(fila, hamming):
+def menor_custo(fila, hamming):
     menorNo = fila[0]
     for elemento in fila:
         if(hamming):
@@ -209,6 +212,7 @@ def menorCusto(fila, hamming):
                 menorNo = elemento
     return menorNo
 
+
 def astar(estado, hamming):
     objetivo = "12345678_"
     caminho = []
@@ -216,7 +220,7 @@ def astar(estado, hamming):
     f = []
     f.append(Nodo(estado, None, None, 0))
     while (f != []):
-        v = menorCusto(f, hamming)
+        v = menor_custo(f, hamming)
         f.remove(v)
         if v.estado == objetivo:
             while v.pai is not None:
@@ -229,6 +233,7 @@ def astar(estado, hamming):
                 f.append(z)
     return None
 
+
 def astar_hamming(estado):
     """
     Recebe um estado (string), executa a busca A* com h(n) = soma das distâncias de Hamming e
@@ -238,9 +243,7 @@ def astar_hamming(estado):
     :param estado: str
     :return:
     """
-    astar(estado, True)
-
-
+    return astar(estado, True)
 
 
 def astar_manhattan(estado):
@@ -252,8 +255,18 @@ def astar_manhattan(estado):
     :param estado: str
     :return:
     """
-    astar(estado, False)
+    return astar(estado, False)
 
-print(custo_manhattan("12345678_"))
-p = astar_hamming("2_3541687")
-q = astar_manhattan("2_3541687")
+
+if __name__ == "__main__":
+    print(custo_hamming("2_3541687"))
+    print(custo_manhattan("2_3541687"))
+    # start_time = time.time()
+    # p = astar_hamming("2_3541687")
+    # print(time.time() - start_time)
+    # print(len(p))
+
+    # start_time = time.time()
+    # q = astar_manhattan("2_3541687")
+    # print(time.time() - start_time)
+    # print(len(q))
