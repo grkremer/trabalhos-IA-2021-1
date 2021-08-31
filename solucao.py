@@ -3,6 +3,46 @@ import time
 
 
 class Nodo:
+    def custo_hamming(self, estado):
+        valor = 0
+        objetivo = "12345678_"
+        for index, x in enumerate(estado):
+            if objetivo[index] != x:
+                valor += 1
+
+        return valor
+
+    def encontra_pos_y(self, y, e):
+        if y in e[0:3]:
+            return 0
+        elif y in e[3:6]:
+            return 1
+        else:
+            return 2
+
+
+    def encontra_pos_x(self, x, e):
+        if x in [e[0], e[3], e[6]]:
+            return 0
+        elif x in [e[1], e[4], e[7]]:
+            return 1
+        else:
+            return 2
+
+
+    def custo_manhattan(self, estado):
+        valor = 0
+        objetivo = "12345678_"
+        for index, x in enumerate(estado):
+            x_dist = abs(self.encontra_pos_x(x, objetivo) - self.encontra_pos_x(x, estado))
+            y_dist = abs(self.encontra_pos_y(x, objetivo) - self.encontra_pos_y(x, estado))
+            valor += x_dist+y_dist
+        return valor
+
+    def calcula_custo_total(self):
+        self.custo_total_manhattan = self.custo + self.custo_manhattan(self.estado)
+        self.custo_total_hamming = self.custo + self.custo_hamming(self.estado)
+
     def __init__(self, estado, pai, acao, custo):
         """
         Inicializa o nodo com os atributos recebidos
@@ -14,8 +54,9 @@ class Nodo:
         self.estado = estado
         self.pai = pai
         self.acao = acao
-        self.custo = custo
-
+        self.custo = custo   
+        self.custo_total_manhattan = 0
+        self.custo_total_hamming = 0
 
 def troca(palavra, a, b):
     palavra = list(palavra)
@@ -90,44 +131,6 @@ def move_esquerda(estado, posicao):
         return troca(estado, posicao, posicao-1)
     else:
         return estado
-
-
-def custo_hamming(estado):
-    valor = 0
-    objetivo = "12345678_"
-    for index, x in enumerate(estado):
-        if objetivo[index] != x:
-            valor += 1
-
-    return valor
-
-
-def encontra_pos_y(y, e):
-    if y in e[0:3]:
-        return 0
-    elif y in e[3:6]:
-        return 1
-    else:
-        return 2
-
-
-def encontra_pos_x(x, e):
-    if x in [e[0], e[3], e[6]]:
-        return 0
-    elif x in [e[1], e[4], e[7]]:
-        return 1
-    else:
-        return 2
-
-
-def custo_manhattan(estado):
-    valor = 0
-    objetivo = "12345678_"
-    for index, x in enumerate(estado):
-        x_dist = abs(encontra_pos_x(x, objetivo) - encontra_pos_x(x, estado))
-        y_dist = abs(encontra_pos_y(x, objetivo) - encontra_pos_y(x, estado))
-        valor += x_dist+y_dist
-    return valor
 
 
 def expande(nodo):
@@ -205,10 +208,10 @@ def menor_custo(fila, hamming):
     menorNo = fila[0]
     for elemento in fila:
         if(hamming):
-            if(elemento.custo+custo_hamming(elemento.estado) < menorNo.custo+custo_hamming(menorNo.estado)):
+            if(elemento.custo_total_hamming < menorNo.custo_total_hamming):
                 menorNo = elemento
         else:
-            if(elemento.custo+custo_manhattan(elemento.estado) < menorNo.custo+custo_manhattan(menorNo.estado)):
+            if(elemento.custo_total_manhattan < menorNo.custo_total_manhattan):
                 menorNo = elemento
     return menorNo
 
@@ -219,6 +222,7 @@ def astar(estado, hamming):
     x = set()
     f = []
     f.append(Nodo(estado, None, None, 0))
+    f[0].calcula_custo_total()
     while (f != []):
         v = menor_custo(f, hamming)
         f.remove(v)
@@ -230,7 +234,9 @@ def astar(estado, hamming):
         if v.estado not in x:
             x.add(v.estado)
             for z in expande(v):
-                f.append(z)
+                if z.estado not in x:
+                    z.calcula_custo_total()
+                    f.append(z)
     return None
 
 
@@ -259,14 +265,17 @@ def astar_manhattan(estado):
 
 
 if __name__ == "__main__":
-    print(custo_hamming("2_3541687"))
-    print(custo_manhattan("2_3541687"))
-    # start_time = time.time()
-    # p = astar_hamming("2_3541687")
-    # print(time.time() - start_time)
+    # print(custo_hamming("2_3541687"))
+    start_time = time.time()
+    p = astar_manhattan("185423_67")
+    print(time.time() - start_time)
+    # print(custo_manhattan("2_3541687"))
+    start_time = time.time()
+    p = astar_hamming("2_3541687")
+    print(time.time() - start_time)
     # print(len(p))
 
-    # start_time = time.time()
-    # q = astar_manhattan("2_3541687")
-    # print(time.time() - start_time)
+    start_time = time.time()
+    q = astar_manhattan("2_3541687")
+    print(time.time() - start_time)
     # print(len(q))
