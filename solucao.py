@@ -198,6 +198,37 @@ def dfs(estado):
     return None
 
 
+def menorCusto(fila, hamming):
+    menorNo = fila[0]
+    for elemento in fila:
+        if(hamming):
+            if(elemento.custo+custo_hamming(elemento.estado) < menorNo.custo+custo_hamming(menorNo.estado)):
+                menorNo = elemento
+        else:
+            if(elemento.custo+custo_manhattan(elemento.estado) < menorNo.custo+custo_manhattan(menorNo.estado)):
+                menorNo = elemento
+    return menorNo
+
+def astar(estado, hamming):
+    objetivo = "12345678_"
+    caminho = []
+    x = set()
+    f = []
+    f.append(Nodo(estado, None, None, 0))
+    while (f != []):
+        v = menorCusto(f, hamming)
+        f.remove(v)
+        if v.estado == objetivo:
+            while v.pai is not None:
+                caminho.insert(0, v)
+                v = v.pai
+            return caminho
+        if v.estado not in x:
+            x.add(v.estado)
+            for z in expande(v):
+                f.append(z)
+    return None
+
 def astar_hamming(estado):
     """
     Recebe um estado (string), executa a busca A* com h(n) = soma das distâncias de Hamming e
@@ -207,8 +238,7 @@ def astar_hamming(estado):
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    astar(estado, True)
 
 
 
@@ -222,7 +252,8 @@ def astar_manhattan(estado):
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    astar(estado, False)
 
 print(custo_manhattan("12345678_"))
+p = astar_hamming("2_3541687")
+q = astar_manhattan("2_3541687")
