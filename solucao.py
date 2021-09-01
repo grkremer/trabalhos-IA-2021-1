@@ -267,15 +267,19 @@ def astar_manhattan(estado):
 if __name__ == "__main__":
     # print(custo_hamming("2_3541687"))
     start_time = time.time()
-    p = astar_manhattan("185423_67")
+    a = dfs("2_3541687")
+    print(time.time() - start_time)
+
+    start_time = time.time()
+    b = bfs("2_3541687")
     print(time.time() - start_time)
     # print(custo_manhattan("2_3541687"))
     start_time = time.time()
-    p = astar_hamming("2_3541687")
+    c = astar_hamming("2_3541687")
     print(time.time() - start_time)
     # print(len(p))
 
     start_time = time.time()
-    q = astar_manhattan("2_3541687")
+    d = astar_manhattan("2_3541687")
     print(time.time() - start_time)
     # print(len(q))
