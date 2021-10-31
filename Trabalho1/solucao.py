@@ -20,7 +20,6 @@ class Nodo:
         else:
             return 2
 
-
     def encontra_pos_x(self, x, e):
         if x in [e[0], e[3], e[6]]:
             return 0
@@ -29,18 +28,20 @@ class Nodo:
         else:
             return 2
 
-
     def custo_manhattan(self, estado):
         valor = 0
         objetivo = "12345678_"
         for index, x in enumerate(estado):
-            x_dist = abs(self.encontra_pos_x(x, objetivo) - self.encontra_pos_x(x, estado))
-            y_dist = abs(self.encontra_pos_y(x, objetivo) - self.encontra_pos_y(x, estado))
+            x_dist = abs(self.encontra_pos_x(x, objetivo) -
+                         self.encontra_pos_x(x, estado))
+            y_dist = abs(self.encontra_pos_y(x, objetivo) -
+                         self.encontra_pos_y(x, estado))
             valor += x_dist+y_dist
         return valor
 
     def calcula_custo_total(self):
-        self.custo_total_manhattan = self.custo + self.custo_manhattan(self.estado)
+        self.custo_total_manhattan = self.custo + \
+            self.custo_manhattan(self.estado)
         self.custo_total_hamming = self.custo + self.custo_hamming(self.estado)
 
     def __init__(self, estado, pai, acao, custo):
@@ -54,9 +55,10 @@ class Nodo:
         self.estado = estado
         self.pai = pai
         self.acao = acao
-        self.custo = custo   
+        self.custo = custo
         self.custo_total_manhattan = 0
         self.custo_total_hamming = 0
+
 
 def troca(palavra, a, b):
     palavra = list(palavra)
@@ -166,7 +168,7 @@ def bfs(estado):
         v = f.get()
         if v.estado == objetivo:
             while v.pai is not None:
-                caminho.insert(0, v)
+                caminho.insert(0, v.acao)
                 v = v.pai
             return caminho
         if v.estado not in x:
@@ -194,7 +196,7 @@ def dfs(estado):
         v = f.get()
         if v.estado == objetivo:
             while v.pai is not None:
-                caminho.insert(0, v)
+                caminho.insert(0, v.acao)
                 v = v.pai
             return caminho
         if v.estado not in x:
@@ -228,7 +230,7 @@ def astar(estado, hamming):
         f.remove(v)
         if v.estado == objetivo:
             while v.pai is not None:
-                caminho.insert(0, v)
+                caminho.insert(0, v.acao)
                 v = v.pai
             return caminho
         if v.estado not in x:
